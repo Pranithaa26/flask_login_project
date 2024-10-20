@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script defer src="{{ url_for('static', filename='register.js') }}"></script>
 </head>
 <body>
     <div class="container">
         <div class="card">
             <h2>Register</h2>
-            <form action="/register" method="POST">
+            <form id="registerForm" action="/register" method="POST">
                 <div class="input-group">
                     <label for="userId">User ID</label>
                     <input type="text" id="userId" name="userId" placeholder="Enter User ID" required>
@@ -19,11 +20,13 @@
                 <div class="input-group">
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password" placeholder="Enter Password" required>
+                    <span id="togglePassword" style="cursor: pointer;">👁️</span>
                 </div>
 
                 <div class="input-group">
                     <label for="confirmPassword">Confirm Password</label>
                     <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
+                    <span id="toggleConfirmPassword" style="cursor: pointer;">👁️</span>
                 </div>
 
                 <button type="submit">Register</button>
@@ -38,5 +41,44 @@
             {% endwith %}
         </div>
     </div>
+
+    <script>
+        // Toggle password visibility
+        const togglePassword = document.querySelector('#togglePassword');
+        const password = document.querySelector('#password');
+        const toggleConfirmPassword = document.querySelector('#toggleConfirmPassword');
+        const confirmPassword = document.querySelector('#confirmPassword');
+
+        togglePassword.addEventListener('click', function () {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            this.textContent = type === 'password' ? '👁️' : '🙈';
+        });
+
+        toggleConfirmPassword.addEventListener('click', function () {
+            const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+            confirmPassword.setAttribute('type', type);
+            this.textContent = type === 'password' ? '👁️' : '🙈';
+        });
+
+        // Form validation before submission
+        const registerForm = document.getElementById('registerForm');
+        registerForm.addEventListener('submit', function (event) {
+            const userId = document.getElementById('userId').value.trim();
+            const passwordValue = document.getElementById('password').value.trim();
+            const confirmPasswordValue = document.getElementById('confirmPassword').value.trim();
+
+            if (!userId || !passwordValue || !confirmPasswordValue) {
+                event.preventDefault();  // Prevent form submission
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            if (passwordValue !== confirmPasswordValue) {
+                event.preventDefault();  // Prevent form submission
+                alert('Passwords do not match.');
+            }
+        });
+    </script>
 </body>
 </html>
